@@ -1,0 +1,17 @@
+# Protect source instructions
+*.pdf
+
+# Protect large raw data files
+data/nga_education_facilities.csv
+data/nga_conflict_data_ucdp.csv
+data/nga_adm2_boundaries.geojson
+data/nga_education_facilities.xlsx
+
+# Keep the cleaned, northeast-specific data (This is required for the exam)
+!data/northeast_schools.csv
+!data/northeast_conflict.csv
+
+# Ignore temporary system files
+.DS_Store
+node_modules/
+.env
