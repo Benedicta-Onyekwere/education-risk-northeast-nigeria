@@ -44,15 +44,15 @@
         <!-- Dashboard Content -->
         <div class="flex-grow overflow-y-auto sidebar-scroll p-6 space-y-8">
             
-            <!-- Quick Stats -->
+            <!-- Quick Stats (Updated to your cleaned counts) -->
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                     <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Verified Schools</p>
-                    <p class="text-2xl font-bold text-blue-400">167</p>
+                    <p class="text-2xl font-bold text-blue-400">76</p>
                 </div>
                 <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                     <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Conflict Events</p>
-                    <p class="text-2xl font-bold text-red-500">305</p>
+                    <p class="text-2xl font-bold text-red-500">265</p>
                 </div>
             </div>
 
@@ -114,7 +114,7 @@
             return s > 7 ? '#ef4444' : s > 4 ? '#f97316' : s > 1 ? '#eab308' : '#22c55e';
         }
 
-        // --- Data Loading ---
+        // --- Data Loading (Using your exact cleaned files) ---
         function init() {
             // 1. Load LGA Risk Scores
             Papa.parse('northeast_lga_risk_scores_cleaned.csv', {
