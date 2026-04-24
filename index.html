@@ -37,8 +37,8 @@
                 <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
                 <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400">Education Bridge Initiative</span>
             </div>
-            <h1 class="text-xl font-bold tracking-tight">Conflict-Sensitive Planning</h1>
-            <p class="text-xs text-slate-400 mt-1">Northeast Nigeria Strategic Risk Assessment (2024)</p>
+            <h1 class="text-xl font-bold tracking-tight">Northeast Nigeria: Where Children Face Conflict and Lost School Access</h1>
+            <p class="text-xs text-slate-400 mt-1">Strategic Education Risk Assessment (2024)</p>
         </div>
 
         <!-- Dashboard Content -->
@@ -79,11 +79,9 @@
             <section>
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">High-Risk Priority Districts</h3>
-                    <span class="text-[9px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded border border-red-500/30 font-bold">Top 5 districts require immediate assessment</span>
+                    <span class="text-[9px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded border border-red-500/30 font-bold tracking-tight">Top 5 districts require immediate assessment</span>
                 </div>
-                <div id="lga-list" class="space-y-2">
-                    <!-- Dynamic Top 5 will be injected here -->
-                </div>
+                <div id="lga-list" class="space-y-2"></div>
             </section>
         </div>
 
@@ -116,8 +114,6 @@
                 download: true, header: true, dynamicTyping: true,
                 complete: function(results) {
                     const data = results.data.filter(d => d.LGA_NAME);
-                    
-                    // Logic: Sort and take EXACTLY TOP 5
                     const sorted = [...data].sort((a, b) => b.risk_score - a.risk_score);
                     const top5 = sorted.slice(0, 5);
                     
@@ -171,12 +167,11 @@
                         .filter(d => d.latitude && d.longitude)
                         .map(d => [d.latitude, d.longitude, 0.5]);
                     
-                    // Logic: Heatmap Opacity set to 0.3 for visual clarity
                     L.heatLayer(points, { 
                         radius: 20, 
                         blur: 15, 
                         maxZoom: 10, 
-                        maxOpacity: 0.3,
+                        maxOpacity: 0.5,
                         gradient: {0.4: '#1e3a8a', 0.6: '#9333ea', 1: '#ef4444'} 
                     }).addTo(heatmapLayer);
                 }
