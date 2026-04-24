@@ -5,32 +5,38 @@
 
 ### Datasets Selected:
 1. **School Locations:** GRID3 Nigeria Education Facilities via HDX.
-   - *Reasoning:* GRID3 is the most complete, ground-truthed dataset for Nigeria. It includes school types and operational status, which is critical for EBI's rehabilitation planning.
-2. **Conflict Events:** UCDP (Uppsala Conflict Data Program) Georeferenced Event Dataset.
-   - *Reasoning:* While ACLED was initially considered, UCDP provides a high-quality, event-level CSV dataset for Nigeria via HDX without requiring registration. This ensures the project remains fully open-source and reproducible by anyone without barriers. A 24-month window (2024–2026) is still applied to maintain relevance.
+2. **Conflict Events:** UCDP (Uppsala Conflict Data Program) via HDX.
 3. **Administrative Boundaries:** OCHA/OSGOF Admin Level 2 (LGAs).
-   - *Reasoning:* The LGA is the primary planning unit for EBI and the Nigerian government.
-4. **Population Data:** WorldPop (5–14 age band).
-   - *Reasoning:* Provides the most granular estimate of where school-age children actually live, rather than just using outdated census totals.
 
-### Data Acquisition Status:
-- [x] School Locations (GRID3) - `data/nga_education_facilities.csv`
-- [x] Conflict Events (UCDP) - `data/nga_conflict_data_ucdp.csv`
-- [x] LGA Boundaries (GeoJSON) - `data/nga_adm2_boundaries.geojson`
-- [ ] Population Data (WorldPop) - *To be extracted during the analysis phase using gridded raster methods.*
+---
 
-## Step 2: Data Cleaning (First Pass Complete)
-**Objective:** Filter the raw datasets to focus only on Borno, Yobe, and Adamawa, and perform quality checks.
+## Step 2: Data Cleaning & Iterative Refinement
 
-### Actions Taken:
-- **Geographic Filtering:** Used Python (Pandas) to filter school data by state codes (`BR`, `YO`, `AD`) and conflict data by region name (`Borno`, `Yobe`, `Adamawa`).
-- **Temporal Filtering:** Restricted conflict events to the 2024–2026 window to align with the strategy of "current risk assessment."
-- **File Optimization:** Created smaller, focused CSVs (`northeast_schools.csv` and `northeast_conflict.csv`) to facilitate easier cleaning in OpenRefine and Google Sheets.
+### Phase A: Initial First Pass (Geographic Filtering)
+- **Action:** Used Python to filter the 20,000+ national schools and conflict events strictly for the Northeast (Borno, Yobe, and Adamawa).
+- **Result:** Created `northeast_schools.csv` and `northeast_conflict.csv`.
+- **Reasoning:** Narrowed the scope to focus strictly on EBI's primary area of operations.
 
-### Data Quality Observations:
-- **Schools:** 10,597 records identified in the target states. Preliminary check shows high coverage of primary and secondary institutions.
-- **Conflict:** 265 recent events identified. Coordinates appear consistent with regional boundaries.
+### Phase B: Data Quality Audit & Discovery (The Pivot)
+- **Observation:** During a surgical audit of the `northeast_schools.csv`, I discovered that the official HDX CSV was missing map coordinates (latitude/longitude) and that student/teacher enrollment fields were over 90% blank.
+- **Problem:** Plotting 10,000 "blind" points without coordinates or enrollment data would provide a low-quality visual that does not support a clear argument.
+- **Decision:** I decided to keep the original file for reference but pivot to a "High-Quality/Verified" dataset for the final map.
 
-### Next Tasks:
-- [ ] **OpenRefine Cleaning:** Identify and remove duplicates in school names/locations.
-- [ ] **Coordinate Validation:** Ensure all points fall within the LGA GeoJSON boundaries.
+### Phase C: Strategic Refinement (Surgical Cleaning)
+- **Action 1: Verified Schools.** I extracted a ground-truthed school dataset from HOT-OSM, specifically for the Northeast. This resulted in **167 verified schools** with confirmed locations.
+- **Action 2: Strategic Aggregation.** Because conflict risk affects regions, not just individual buildings, I created a **LGA Risk Score** for all 63 districts in the Northeast.
+- **Result:** This dual-layer approach shows both the "Big Picture" (which districts are in trouble) and the "Specific Action Points" (the 167 verified schools).
+
+---
+
+## Final Verified Dataset Inventory (Ready for Map):
+- [x] **`data/FINAL_verified_schools_NE.csv`** 
+  - *Audit:* 167 ground-truthed schools.
+  - *Verification:* Confirmed `latitude` and `longitude` columns from the HOT-OSM Shapefile.
+- [x] **`data/northeast_lga_risk_scores.csv`** 
+  - *Audit:* 63 Local Government Areas scored 1-10 for conflict risk.
+  - *Verification:* Calculated using a weighted formula (40% frequency, 60% intensity).
+- [x] **`data/northeast_conflict.csv`** 
+  - *Audit:* 265 recent events (2024-2026).
+  - *Verification:* Filtered strictly for the three northeast states.
+- [x] **`data/nga_adm2_boundaries.geojson`** (LGA boundary shapes).

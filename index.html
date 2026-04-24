@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBI Strategic Dashboard | Northeast Nigeria</title>
+    
+    <!-- Scripts & Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        #map { height: 100vh; width: 100%; z-index: 1; background: #020617; }
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: #0f172a; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .leaflet-popup-content-wrapper { background: #1e293b; color: white; border-radius: 8px; border: 1px solid #334155; }
+        .leaflet-popup-tip { background: #1e293b; }
+        .custom-tooltip { background: #0f172a; border: 1px solid #334155; color: white; border-radius: 4px; padding: 4px 8px; font-weight: 600; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-50 flex overflow-hidden">
+
+    <!-- Main Map Section -->
+    <main id="map" class="flex-grow"></main>
+
+    <!-- v0 Style Sidebar -->
+    <aside class="w-[400px] h-screen bg-slate-900 border-l border-slate-800 flex flex-col shadow-2xl relative z-10">
+        <!-- Header -->
+        <div class="p-6 border-b border-slate-800">
+            <div class="flex items-center space-x-2 mb-1">
+                <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400">Education Bridge Initiative</span>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight">Conflict-Sensitive Planning</h1>
+            <p class="text-xs text-slate-400 mt-1">Northeast Nigeria Strategic Risk Assessment (2024)</p>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="flex-grow overflow-y-auto sidebar-scroll p-6 space-y-8">
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Verified Schools</p>
+                    <p class="text-2xl font-bold text-blue-400">167</p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Conflict Events</p>
+                    <p class="text-2xl font-bold text-red-500">305</p>
+                </div>
+            </div>
+
+            <!-- Layer Toggles -->
+            <section>
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Strategic Layers</h3>
+                <div class="space-y-3">
+                    <button onclick="toggleLayer('risk')" id="btn-risk" class="w-full flex items-center justify-between p-3 rounded-lg bg-blue-600/10 border border-blue-500/50 text-sm transition-all hover:bg-blue-600/20">
+                        <span class="flex items-center"><div class="w-2 h-2 rounded-full bg-blue-400 mr-3"></div>District Risk Scores</span>
+                        <div class="w-8 h-4 bg-blue-500 rounded-full relative"><div class="absolute right-1 top-1 w-2 h-2 bg-white rounded-full"></div></div>
+                    </button>
+                    <button onclick="toggleLayer('schools')" id="btn-schools" class="w-full flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-700 text-sm transition-all hover:border-slate-500">
+                        <span class="flex items-center"><div class="w-2 h-2 rounded-full bg-cyan-400 mr-3"></div>Verified School Points</span>
+                        <div id="toggle-schools" class="w-8 h-4 bg-slate-600 rounded-full relative transition-colors"><div id="dot-schools" class="absolute left-1 top-1 w-2 h-2 bg-white rounded-full transition-all"></div></div>
+                    </button>
+                    <button onclick="toggleLayer('heatmap')" id="btn-heatmap" class="w-full flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-700 text-sm transition-all hover:border-slate-500">
+                        <span class="flex items-center"><div class="w-2 h-2 rounded-full bg-red-400 mr-3"></div>Conflict Intensity (Heat)</span>
+                        <div id="toggle-heatmap" class="w-8 h-4 bg-slate-600 rounded-full relative transition-colors"><div id="dot-heatmap" class="absolute left-1 top-1 w-2 h-2 bg-white rounded-full transition-all"></div></div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Top Priority Districts -->
+            <section>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">High-Risk Priority Districts</h3>
+                    <span class="text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded border border-red-500/30">Action Needed</span>
+                </div>
+                <div id="lga-list" class="space-y-2">
+                    <!-- LGA rows will be injected here -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-6 border-t border-slate-800 bg-slate-950/50">
+            <p class="text-[10px] text-slate-500 leading-relaxed italic">
+                * Risk scores are calculated using a weighted formula (40% frequency / 60% fatalities). Data sourced from UCDP & HOT-OSM.
+            </p>
+        </div>
+    </aside>
+
+    <script>
+        // --- Map Setup ---
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([11.5, 13.0], 8);
+        
+        // CartoDB Dark Matter tiles
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+        // Layers Initialization
+        const riskLayer = L.layerGroup().addTo(map);
+        const schoolLayer = L.layerGroup();
+        const heatmapLayer = L.layerGroup();
+
+        let visibleLayers = { risk: true, schools: false, heatmap: false };
+
+        // Helper: Risk Colors
+        function getRiskColor(s) {
+            return s > 7 ? '#ef4444' : s > 4 ? '#f97316' : s > 1 ? '#eab308' : '#22c55e';
+        }
+
+        // --- Data Loading ---
+        function init() {
+            // 1. Load LGA Risk Scores
+            Papa.parse('northeast_lga_risk_scores_cleaned.csv', {
+                download: true, header: true, dynamicTyping: true,
+                complete: function(results) {
+                    const data = results.data.filter(d => d.LGA_NAME);
+                    
+                    // Populate Sidebar List
+                    const list = document.getElementById('lga-list');
+                    const sorted = [...data].sort((a, b) => b.risk_score - a.risk_score);
+                    
+                    sorted.slice(0, 10).forEach(lga => {
+                        const row = document.createElement('div');
+                        row.className = "flex items-center justify-between p-3 rounded-lg bg-slate-800/30 border border-slate-800 hover:border-slate-600 cursor-pointer group transition-all";
+                        row.onclick = () => map.flyTo([lga.latitude, lga.longitude], 11);
+                        row.innerHTML = `
+                            <div class="flex flex-col">
+                                <span class="text-sm font-semibold group-hover:text-blue-400 transition-colors">${lga.LGA_NAME}</span>
+                                <span class="text-[10px] text-slate-500">${lga.event_count} events recorded</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-1 bg-slate-700 rounded-full overflow-hidden">
+                                    <div class="h-full" style="width: ${lga.risk_score*10}%; background: ${getRiskColor(lga.risk_score)}"></div>
+                                </div>
+                                <span class="text-xs font-mono font-bold" style="color: ${getRiskColor(lga.risk_score)}">${lga.risk_score.toFixed(1)}</span>
+                            </div>
+                        `;
+                        list.appendChild(row);
+                    });
+
+                    // Add markers to map
+                    data.forEach(lga => {
+                        L.circleMarker([lga.latitude, lga.longitude], {
+                            radius: 8 + (lga.risk_score * 1.5),
+                            fillColor: getRiskColor(lga.risk_score),
+                            color: '#fff', weight: 1, fillOpacity: 0.7
+                        }).addTo(riskLayer).bindTooltip(lga.LGA_NAME, { className: 'custom-tooltip', direction: 'top', offset: [0,-5] });
+                    });
+                }
+            });
+
+            // 2. Load Schools
+            Papa.parse('verified_northeast_schools_cleaned.csv', {
+                download: true, header: true, dynamicTyping: true,
+                complete: function(results) {
+                    results.data.forEach(s => {
+                        if (s.latitude && s.longitude) {
+                            L.circleMarker([s.latitude, s.longitude], {
+                                radius: 3, fillColor: '#22d3ee', color: '#fff', weight: 0.5, fillOpacity: 1
+                            }).addTo(schoolLayer).bindPopup(`<div class="p-2">
+                                <h4 class="font-bold text-blue-400 mb-1">${s.NAME}</h4>
+                                <p class="text-[10px] uppercase text-slate-400 tracking-wider">${s.amenity || 'Education Facility'}</p>
+                            </div>`);
+                        }
+                    });
+                }
+            });
+
+            // 3. Load Heatmap
+            Papa.parse('northeast_conflict_cleaned.csv', {
+                download: true, header: true, dynamicTyping: true,
+                complete: function(results) {
+                    const points = results.data
+                        .filter(d => d.latitude && d.longitude)
+                        .map(d => [d.latitude, d.longitude, 0.5]);
+                    L.heatLayer(points, { radius: 25, blur: 15, maxZoom: 10, gradient: {0.4: '#1e3a8a', 0.6: '#9333ea', 1: '#ef4444'} }).addTo(heatmapLayer);
+                }
+            });
+        }
+
+        // UI Layer Control
+        function toggleLayer(layer) {
+            visibleLayers[layer] = !visibleLayers[layer];
+            const btn = document.getElementById(`btn-${layer}`);
+            const toggle = document.getElementById(`toggle-${layer}`);
+            const dot = document.getElementById(`dot-${layer}`);
+
+            if (visibleLayers[layer]) {
+                if (layer === 'risk') map.addLayer(riskLayer);
+                if (layer === 'schools') map.addLayer(schoolLayer);
+                if (layer === 'heatmap') map.addLayer(heatmapLayer);
+                
+                if (btn) {
+                    btn.classList.add('bg-blue-600/10', 'border-blue-500/50');
+                    btn.classList.remove('bg-slate-800/50', 'border-slate-700');
+                }
+                if (toggle) { toggle.classList.replace('bg-slate-600', 'bg-blue-500'); dot.classList.replace('left-1', 'right-1'); }
+            } else {
+                if (layer === 'risk') map.removeLayer(riskLayer);
+                if (layer === 'schools') map.removeLayer(schoolLayer);
+                if (layer === 'heatmap') map.removeLayer(heatmapLayer);
+                
+                if (btn) {
+                    btn.classList.remove('bg-blue-600/10', 'border-blue-500/50');
+                    btn.classList.add('bg-slate-800/50', 'border-slate-700');
+                }
+                if (toggle) { toggle.classList.replace('bg-blue-500', 'bg-slate-600'); dot.classList.replace('right-1', 'left-1'); }
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
