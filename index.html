@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EBI Strategic Dashboard | Northeast Nigeria</title>
-    
-    <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
     <style>
         body { font-family: 'Inter', sans-serif; }
         #map { height: 100vh; width: 100%; z-index: 1; background: #020617; }
@@ -25,26 +22,17 @@
     </style>
 </head>
 <body class="bg-slate-950 text-slate-50 flex overflow-hidden">
-
-    <!-- Main Map Section -->
     <main id="map" class="flex-grow"></main>
-
-    <!-- v0 Style Sidebar -->
     <aside class="w-[400px] h-screen bg-slate-900 border-l border-slate-800 flex flex-col shadow-2xl relative z-10">
-        <!-- Header -->
         <div class="p-6 border-b border-slate-800">
             <div class="flex items-center space-x-2 mb-1">
                 <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
                 <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400">Education Bridge Initiative</span>
             </div>
-            <h1 class="text-xl font-bold tracking-tight">Northeast Nigeria: Where Children Face Conflict and Lost School Access</h1>
-            <p class="text-xs text-slate-400 mt-1">Strategic Education Risk Assessment (2024)</p>
+            <h1 class="text-xl font-bold tracking-tight text-white">Northeast Nigeria: Where Children Face Conflict and Lost School Access</h1>
+            <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Strategic Risk Assessment (2024)</p>
         </div>
-
-        <!-- Dashboard Content -->
         <div class="flex-grow overflow-y-auto sidebar-scroll p-6 space-y-8">
-            
-            <!-- Quick Stats -->
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
                     <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Verified Schools</p>
@@ -55,8 +43,6 @@
                     <p class="text-2xl font-bold text-red-500">265</p>
                 </div>
             </div>
-
-            <!-- Layer Toggles -->
             <section>
                 <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Strategic Layers</h3>
                 <div class="space-y-3">
@@ -74,41 +60,30 @@
                     </button>
                 </div>
             </section>
-
-            <!-- Top Priority Districts -->
             <section>
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">High-Risk Priority Districts</h3>
-                    <span class="text-[9px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded border border-red-500/30 font-bold tracking-tight">Top 5 districts require immediate assessment</span>
+                    <span class="text-[9px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded border border-red-500/30 font-bold">Top 5 districts require immediate assessment</span>
                 </div>
-                <div id="lga-list" class="space-y-2"></div>
+                <div id="lga-list" class="space-y-3"></div>
             </section>
         </div>
-
-        <!-- Footer -->
         <div class="p-6 border-t border-slate-800 bg-slate-950/50">
-            <p class="text-[10px] text-slate-500 leading-relaxed italic">
+            <p class="text-[9px] text-slate-500 leading-relaxed italic">
                 * Risk scores: 35% conflict frequency, 45% fatality severity, 20% population vulnerability. Sources: UCDP (2024), HOT-OSM, and UNFPA Nigeria Subnational Population Statistics 2020 (HDX).
             </p>
         </div>
     </aside>
-
     <script>
-        // --- Map Setup ---
         const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([11.5, 13.0], 8);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
-
         const riskLayer = L.layerGroup().addTo(map);
         const schoolLayer = L.layerGroup();
         const heatmapLayer = L.layerGroup();
-
         let visibleLayers = { risk: true, schools: false, heatmap: false };
-
         function getRiskColor(s) {
             return s > 7 ? '#ef4444' : s > 4 ? '#f97316' : s > 1 ? '#eab308' : '#22c55e';
         }
-
-        // --- Data Loading ---
         function init() {
             Papa.parse('northeast_lga_risk_scores_cleaned.csv', {
                 download: true, header: true, dynamicTyping: true,
@@ -116,16 +91,16 @@
                     const data = results.data.filter(d => d.LGA_NAME);
                     const sorted = [...data].sort((a, b) => b.risk_score - a.risk_score);
                     const top5 = sorted.slice(0, 5);
-                    
                     const list = document.getElementById('lga-list');
                     top5.forEach(lga => {
                         const row = document.createElement('div');
                         row.className = "flex items-center justify-between p-3 rounded-lg bg-slate-800/30 border border-slate-800 hover:border-slate-600 cursor-pointer group transition-all";
                         row.onclick = () => map.flyTo([lga.latitude, lga.longitude], 11);
+                        const popDisplay = lga.pop_5_14 > 0 ? `<br><span class="text-[10px] text-blue-400 font-semibold italic">Estimated ${lga.pop_5_14.toLocaleString()} children at risk</span>` : '';
                         row.innerHTML = `
                             <div class="flex flex-col">
                                 <span class="text-sm font-semibold uppercase group-hover:text-blue-400 transition-colors tracking-tight">${lga.LGA_NAME}</span>
-                                <span class="text-[10px] text-slate-500 font-medium">${lga.event_count} events · ${lga.total_fatalities} fatalities</span><br><span class="text-[10px] text-blue-400 font-semibold italic">Estimated ${lga.pop_5_14.toLocaleString()} children at risk</span>
+                                <span class="text-[10px] text-slate-500 font-medium">${lga.event_count} events · ${lga.total_fatalities} fatalities ${popDisplay}</span>
                             </div>
                             <div class="flex items-center space-x-3">
                                 <span class="text-xs font-mono font-bold" style="color: ${getRiskColor(lga.risk_score)}">${lga.risk_score.toFixed(1)}</span>
@@ -133,7 +108,6 @@
                         `;
                         list.appendChild(row);
                     });
-
                     data.forEach(lga => {
                         L.circleMarker([lga.latitude, lga.longitude], {
                             radius: 8 + (lga.risk_score * 1.5),
@@ -143,7 +117,6 @@
                     });
                 }
             });
-
             Papa.parse('verified_northeast_schools_cleaned.csv', {
                 download: true, header: true, dynamicTyping: true,
                 complete: function(results) {
@@ -151,39 +124,24 @@
                         if (s.latitude && s.longitude) {
                             L.circleMarker([s.latitude, s.longitude], {
                                 radius: 3, fillColor: '#22d3ee', color: '#fff', weight: 0.5, fillOpacity: 1
-                            }).addTo(schoolLayer).bindPopup(`<div class="p-2">
-                                <h4 class="font-bold text-blue-400 mb-1">${s.NAME}</h4>
-                                <p class="text-[10px] uppercase text-slate-400 tracking-wider">${s.amenity || 'Education Facility'}</p>
-                            </div>`);
+                            }).addTo(schoolLayer).bindPopup(`<div class="p-2"><h4 class="font-bold text-blue-400 mb-1">${s.NAME}</h4><p class="text-[10px] uppercase text-slate-400 tracking-wider">${s.amenity || 'Education Facility'}</p></div>`);
                         }
                     });
                 }
             });
-
             Papa.parse('northeast_conflict_cleaned.csv', {
                 download: true, header: true, dynamicTyping: true,
                 complete: function(results) {
-                    const points = results.data
-                        .filter(d => d.latitude && d.longitude)
-                        .map(d => [d.latitude, d.longitude, 0.5]);
-                    
-                    L.heatLayer(points, { 
-                        radius: 20, 
-                        blur: 15, 
-                        maxZoom: 10, 
-                        maxOpacity: 0.5,
-                        gradient: {0.4: '#1e3a8a', 0.6: '#9333ea', 1: '#ef4444'} 
-                    }).addTo(heatmapLayer);
+                    const points = results.data.filter(d => d.latitude && d.longitude).map(d => [d.latitude, d.longitude, 0.5]);
+                    L.heatLayer(points, { radius: 20, blur: 15, maxZoom: 10, maxOpacity: 0.5, gradient: {0.4: '#1e3a8a', 0.6: '#9333ea', 1: '#ef4444'} }).addTo(heatmapLayer);
                 }
             });
         }
-
         function toggleLayer(layer) {
             visibleLayers[layer] = !visibleLayers[layer];
             const btn = document.getElementById(`btn-${layer}`);
             const toggle = document.getElementById(`toggle-${layer}`);
             const dot = document.getElementById(`dot-${layer}`);
-
             if (visibleLayers[layer]) {
                 if (layer === 'risk') map.addLayer(riskLayer);
                 if (layer === 'schools') map.addLayer(schoolLayer);
@@ -198,7 +156,6 @@
                 if (toggle) { toggle.classList.replace('bg-blue-500', 'bg-slate-600'); dot.classList.replace('right-1', 'left-1'); }
             }
         }
-
         init();
     </script>
 </body>
