@@ -21,3 +21,13 @@ To ensure complete transparency and reproducibility, this repository is organize
 *   **[METHODOLOGY.md](./METHODOLOGY.md):** A detailed technical log documenting every data sourcing and cleaning decision.
 *   **[Data Dictionary](./data/data_dictionary.md):** Definitions for every column and source in the cleaned datasets.
 *   **`data/`:** Contains the process history files and the UNFPA population source file.
+
+## Data Attribution & Licenses
+In accordance with humanitarian data standards, this project utilizes open-source data from the following providers:
+*   **Conflict Data:** [UCDP GED Global version 23.1](https://ucdp.uu.se/). Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+*   **School Locations:** [HOT-OSM Verified Education Facilities](https://data.humdata.org/). © OpenStreetMap contributors. Licensed under [ODbL](https://opendatacommons.org/licenses/odbl/).
+*   **Population Data:** [UNFPA Nigeria Subnational Population Statistics 2020](https://data.humdata.org/dataset/cod-ps-nga). 
+*   **Administrative Boundaries:** [OCHA Nigeria / OSGOF](https://data.humdata.org/dataset/cod-ab-nga). These boundaries are provided for humanitarian planning purposes under the OCHA standard terms of use.
+
+## Use of AI
+This project utilized Large Language Models for data engineering assistance (scripting and validation), while all strategic, analytical, and design decisions were human-led.
