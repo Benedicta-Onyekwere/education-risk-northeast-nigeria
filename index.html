@@ -14,188 +14,207 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        #map { height: 100vh; width: 100%; z-index: 1; background: #020617; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; }
+        #map { height: 100vh; width: 100%; z-index: 1; }
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
-        .sidebar-scroll::-webkit-scrollbar-track { background: #0f172a; }
-        .sidebar-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .leaflet-popup-content-wrapper { background: #1e293b; color: white; border-radius: 8px; border: 1px solid #334155; }
-        .leaflet-popup-tip { background: #1e293b; }
-        .custom-tooltip { background: #0f172a; border: 1px solid #334155; color: white; border-radius: 4px; padding: 4px 8px; font-weight: 600; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: #020617; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        .leaflet-popup-content-wrapper { background: #0f172a; color: white; border-radius: 12px; border: 1px solid #1e293b; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); }
+        .leaflet-popup-tip { background: #0f172a; }
+        .custom-tooltip { background: #020617; border: 1px solid #334155; color: white; border-radius: 6px; padding: 4px 10px; font-weight: 600; font-size: 11px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
+        .card-glass { background: rgba(30, 41, 59, 0.3); backdrop-filter: blur(8px); border: 1px solid rgba(51, 65, 85, 0.4); }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-50 flex overflow-hidden">
+<body class="bg-slate-950 text-slate-100 flex overflow-hidden">
 
-    <!-- Main Map Section -->
-    <main id="map" class="flex-grow"></main>
+    <!-- 70% Map Section -->
+    <main id="map" class="w-[70%] h-screen relative"></main>
 
-    <!-- v0 Style Sidebar -->
-    <aside class="w-[400px] h-screen bg-slate-900 border-l border-slate-800 flex flex-col shadow-2xl relative z-10">
+    <!-- 30% v0-Style Sidebar -->
+    <aside class="w-[30%] h-screen bg-slate-900 border-l border-slate-800 flex flex-col shadow-2xl relative z-10">
+        
         <!-- Header -->
-        <div class="p-6 border-b border-slate-800">
-            <div class="flex items-center space-x-2 mb-1">
-                <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400">Education Bridge Initiative</span>
+        <div class="p-8 border-b border-slate-800/60">
+            <div class="flex items-center space-x-3 mb-3">
+                <div class="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.6)]"></div>
+                <span class="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400">Education Bridge Initiative</span>
             </div>
-            <h1 class="text-xl font-bold tracking-tight">Northeast Nigeria: Where Children Face Conflict and Lost School Access</h1>
-            <p class="text-xs text-slate-400 mt-1 font-semibold uppercase tracking-wider">Strategic Education Risk Assessment (2024)</p>
+            <h1 class="text-xl font-bold tracking-tight text-white leading-[1.2]">Northeast Nigeria: Where Children Face Conflict and Lost School Access</h1>
+            <p class="text-[10px] text-slate-500 mt-3 uppercase tracking-widest font-bold">Strategic Risk Assessment 2024</p>
         </div>
 
-        <!-- Dashboard Content -->
-        <div class="flex-grow overflow-y-auto sidebar-scroll p-6 space-y-8">
+        <!-- Scrollable Content -->
+        <div class="flex-grow overflow-y-auto sidebar-scroll p-8 space-y-10">
             
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Verified Schools</p>
-                    <p class="text-2xl font-bold text-blue-400">76</p>
-                </div>
-                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                    <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Conflict Events</p>
-                    <p class="text-2xl font-bold text-red-500">265</p>
-                </div>
-            </div>
-
-            <!-- Layer Toggles -->
+            <!-- State Summary Cards -->
             <section>
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Strategic Layers</h3>
-                <div class="space-y-3">
-                    <button onclick="toggleLayer('risk')" id="btn-risk" class="w-full flex items-center justify-between p-3 rounded-lg bg-blue-600/10 border border-blue-500/50 text-sm transition-all hover:bg-blue-600/20">
-                        <span class="flex items-center"><div class="w-2 h-2 rounded-full bg-blue-400 mr-3"></div>District Risk Scores</span>
-                        <div id="toggle-risk" class="w-8 h-4 bg-blue-500 rounded-full relative transition-colors"><div id="dot-risk" class="absolute right-1 top-1 w-2 h-2 bg-white rounded-full transition-all"></div></div>
-                    </button>
-                    <button onclick="toggleLayer('schools')" id="btn-schools" class="w-full flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-700 text-sm transition-all hover:border-slate-500">
-                        <span class="flex items-center"><div class="w-2 h-2 rounded-full bg-cyan-400 mr-3"></div>Verified School Points</span>
-                        <div id="toggle-schools" class="w-8 h-4 bg-slate-600 rounded-full relative transition-colors"><div id="dot-schools" class="absolute left-1 top-1 w-2 h-2 bg-white rounded-full transition-all"></div></div>
-                    </button>
-                    <button onclick="toggleLayer('heatmap')" id="btn-heatmap" class="w-full flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-700 text-sm transition-all hover:border-slate-500">
-                        <span class="flex items-center"><div class="w-2 h-2 rounded-full bg-red-400 mr-3"></div>Conflict Intensity (Heat)</span>
-                        <div id="toggle-heatmap" class="w-8 h-4 bg-slate-600 rounded-full relative transition-colors"><div id="dot-heatmap" class="absolute left-1 top-1 w-2 h-2 bg-white rounded-full transition-all"></div></div>
-                    </button>
+                <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-5">Regional Summaries</h3>
+                <div class="space-y-2.5">
+                    <div class="p-4 rounded-xl card-glass flex justify-between items-center hover:bg-slate-800/40 transition-all border-l-4 border-l-red-500">
+                        <div><p class="text-xs font-bold text-slate-200">Borno State</p><p class="text-[10px] text-slate-500 font-medium">42 Priority Schools</p></div>
+                        <div class="text-right"><p class="text-lg font-black text-red-400 leading-none">8.4</p><p class="text-[8px] uppercase text-slate-600 font-black mt-1">Avg Risk</p></div>
+                    </div>
+                    <div class="p-4 rounded-xl card-glass flex justify-between items-center hover:bg-slate-800/40 transition-all border-l-4 border-l-orange-500">
+                        <div><p class="text-xs font-bold text-slate-200">Yobe State</p><p class="text-[10px] text-slate-500 font-medium">18 Priority Schools</p></div>
+                        <div class="text-right"><p class="text-lg font-black text-orange-400 leading-none">4.1</p><p class="text-[8px] uppercase text-slate-600 font-black mt-1">Avg Risk</p></div>
+                    </div>
+                    <div class="p-4 rounded-xl card-glass flex justify-between items-center hover:bg-slate-800/40 transition-all border-l-4 border-l-yellow-500">
+                        <div><p class="text-xs font-bold text-slate-200">Adamawa State</p><p class="text-[10px] text-slate-500 font-medium">16 Priority Schools</p></div>
+                        <div class="text-right"><p class="text-lg font-black text-yellow-400 leading-none">2.8</p><p class="text-[8px] uppercase text-slate-600 font-black mt-1">Avg Risk</p></div>
+                    </div>
                 </div>
             </section>
 
-            <!-- Top Priority Districts -->
+            <!-- Top 5 districts -->
             <section>
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">High-Risk Priority Districts</h3>
-                    <span class="text-[9px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded border border-red-500/30 font-bold tracking-tight">Top 5 districts require immediate assessment</span>
+                <div class="flex items-center justify-between mb-5">
+                    <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Priority Districts</h3>
+                    <span class="text-[9px] bg-red-500/10 text-red-400 px-2.5 py-1 rounded-full border border-red-500/20 font-black uppercase tracking-tighter">Immediate Assessment</span>
                 </div>
-                <div id="lga-list" class="space-y-2"></div>
+                <div id="lga-list" class="space-y-2.5">
+                    <!-- Top 5 dynamic list -->
+                </div>
+            </section>
+
+            <!-- Map Controls -->
+            <section>
+                <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-5">Map Management</h3>
+                <div class="space-y-2.5">
+                    <button onclick="toggleLayer('risk')" id="btn-risk" class="w-full flex items-center justify-between p-4 rounded-xl bg-blue-600/10 border border-blue-500/30 transition-all group">
+                        <span class="text-xs font-bold text-slate-200 group-hover:text-white">District Risk Score Circles</span>
+                        <div class="w-9 h-5 bg-blue-500 rounded-full relative"><div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full shadow-sm"></div></div>
+                    </button>
+                    <button onclick="toggleLayer('schools')" id="btn-schools" class="w-full flex items-center justify-between p-4 rounded-xl bg-slate-800/40 border border-slate-800 transition-all group hover:border-slate-600">
+                        <span class="text-xs font-bold text-slate-400 group-hover:text-slate-200">Verified School Ground-Truth</span>
+                        <div id="toggle-schools" class="w-9 h-5 bg-slate-700 rounded-full relative transition-colors"><div id="dot-schools" class="absolute left-1 top-1 w-3 h-3 bg-slate-400 rounded-full transition-all"></div></div>
+                    </button>
+                    <button onclick="toggleLayer('heatmap')" id="btn-heatmap" class="w-full flex items-center justify-between p-4 rounded-xl bg-slate-800/40 border border-slate-800 transition-all group hover:border-slate-600">
+                        <span class="text-xs font-bold text-slate-400 group-hover:text-slate-200">Conflict Intensity Heatmap</span>
+                        <div id="toggle-heatmap" class="w-9 h-5 bg-slate-700 rounded-full relative transition-colors"><div id="dot-heatmap" class="absolute left-1 top-1 w-3 h-3 bg-slate-400 rounded-full transition-all"></div></div>
+                    </button>
+                </div>
             </section>
         </div>
 
-        <!-- Footer -->
-        <div class="p-6 border-t border-slate-800 bg-slate-950/50">
-            <p class="text-[10px] text-slate-500 leading-relaxed italic">
-                * Risk scores are calculated using a weighted formula (40% frequency / 60% fatalities). Data sourced from UCDP (2024) & HOT-OSM.
-            </p>
+        <!-- Sticky Footer Counters -->
+        <div class="p-8 border-t border-slate-800 bg-slate-950/60 grid grid-cols-2 gap-8">
+            <div class="space-y-1">
+                <p class="text-[9px] text-slate-600 uppercase font-black tracking-widest">Total Verified</p>
+                <p class="text-xl font-black text-blue-400">76 Schools</p>
+            </div>
+            <div class="text-right space-y-1">
+                <p class="text-[9px] text-slate-600 uppercase font-black tracking-widest">Conflict Events</p>
+                <p class="text-xl font-black text-red-500">265 Points</p>
+            </div>
         </div>
     </aside>
 
     <script>
-        // --- Map Setup ---
-        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([11.5, 13.0], 8);
+        // Initialize Map
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([11.7, 13.2], 7.5);
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
 
         const riskLayer = L.layerGroup().addTo(map);
         const schoolLayer = L.layerGroup();
         const heatmapLayer = L.layerGroup();
-
-        let visibleLayers = { risk: true, schools: false, heatmap: false };
+        let layers = { risk: true, schools: false, heatmap: false };
 
         function getRiskColor(s) {
             return s > 7 ? '#ef4444' : s > 4 ? '#f97316' : s > 1 ? '#eab308' : '#22c55e';
         }
 
-        // --- Data Loading ---
+        function normalize(obj, key) {
+            const low = key.toLowerCase();
+            const match = Object.keys(obj).find(k => k.toLowerCase() === low);
+            return match ? obj[match] : null;
+        }
+
+        // Data Engine
         function init() {
-            Papa.parse('northeast_lga_risk_scores_cleaned.csv', {
-                download: true, header: true, dynamicTyping: true,
-                complete: function(results) {
-                    const data = results.data.filter(d => d.LGA_NAME);
-                    const sorted = [...data].sort((a, b) => b.risk_score - a.risk_score);
-                    const top5 = sorted.slice(0, 5);
-                    
+            // 1. Risk Scores & Circles
+            Papa.parse('./northeast_lga_risk_scores_cleaned.csv', {
+                download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
+                complete: (res) => {
+                    const data = res.data.map(d => ({
+                        name: normalize(d, 'LGA_NAME'),
+                        lat: normalize(d, 'latitude'),
+                        lon: normalize(d, 'longitude'),
+                        score: normalize(d, 'risk_score'),
+                        events: normalize(d, 'event_count'),
+                        deaths: normalize(d, 'total_fatalities')
+                    })).filter(d => d.name && d.lat);
+
+                    // Dynamic Sidebar Top 5
                     const list = document.getElementById('lga-list');
+                    const top5 = [...data].sort((a,b) => b.score - a.score).slice(0, 5);
                     top5.forEach(lga => {
-                        const row = document.createElement('div');
-                        row.className = "flex items-center justify-between p-3 rounded-lg bg-slate-800/30 border border-slate-800 hover:border-slate-600 cursor-pointer group transition-all";
-                        row.onclick = () => map.flyTo([lga.latitude, lga.longitude], 11);
-                        row.innerHTML = `
-                            <div class="flex flex-col">
-                                <span class="text-sm font-semibold uppercase group-hover:text-blue-400 transition-colors tracking-tight">${lga.LGA_NAME}</span>
-                                <span class="text-[10px] text-slate-500 font-medium">${lga.event_count} events · ${lga.total_fatalities} fatalities</span>
+                        const div = document.createElement('div');
+                        div.className = "p-4 rounded-xl card-glass border-slate-800/50 hover:border-blue-500/40 cursor-pointer group transition-all shadow-sm";
+                        div.onclick = () => map.flyTo([lga.lat, lga.lon], 11);
+                        div.innerHTML = `
+                            <div class="flex justify-between items-start mb-1.5">
+                                <span class="text-[13px] font-black text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">${lga.name}</span>
+                                <span class="text-xs font-black px-2 py-0.5 rounded-md" style="color: ${getRiskColor(lga.score)}; background: ${getRiskColor(lga.score)}20">${lga.score.toFixed(1)}</span>
                             </div>
-                            <div class="flex items-center space-x-3">
-                                <span class="text-xs font-mono font-bold" style="color: ${getRiskColor(lga.risk_score)}">${lga.risk_score.toFixed(1)}</span>
-                            </div>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">${lga.events} events · ${lga.deaths} fatalities</p>
                         `;
-                        list.appendChild(row);
+                        list.appendChild(div);
                     });
 
+                    // Map Circles
                     data.forEach(lga => {
-                        L.circleMarker([lga.latitude, lga.longitude], {
-                            radius: 8 + (lga.risk_score * 1.5),
-                            fillColor: getRiskColor(lga.risk_score),
-                            color: '#fff', weight: 1, fillOpacity: 0.7
-                        }).addTo(riskLayer).bindTooltip(lga.LGA_NAME, { className: 'custom-tooltip', direction: 'top', offset: [0,-5] });
+                        L.circleMarker([lga.lat, lga.lon], {
+                            radius: 10 + (lga.score * 2.2),
+                            fillColor: getRiskColor(lga.score),
+                            color: '#fff', weight: 1.5, fillOpacity: 0.65
+                        }).addTo(riskLayer).bindTooltip(lga.name, { className: 'custom-tooltip', direction: 'top', offset: [0,-10] });
                     });
                 }
             });
 
-            Papa.parse('verified_northeast_schools_cleaned.csv', {
-                download: true, header: true, dynamicTyping: true,
-                complete: function(results) {
-                    results.data.forEach(s => {
-                        if (s.latitude && s.longitude) {
-                            L.circleMarker([s.latitude, s.longitude], {
-                                radius: 3, fillColor: '#22d3ee', color: '#fff', weight: 0.5, fillOpacity: 1
-                            }).addTo(schoolLayer).bindPopup(`<div class="p-2">
-                                <h4 class="font-bold text-blue-400 mb-1">${s.NAME}</h4>
-                                <p class="text-[10px] uppercase text-slate-400 tracking-wider">${s.amenity || 'Education Facility'}</p>
+            // 2. Schools Ground-Truth
+            Papa.parse('./verified_northeast_schools_cleaned.csv', {
+                download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
+                complete: (res) => {
+                    res.data.forEach(s => {
+                        const lat = normalize(s, 'latitude'), lon = normalize(s, 'longitude');
+                        if (lat && lon) {
+                            L.circleMarker([lat, lon], {
+                                radius: 3.8, fillColor: '#06b6d4', color: '#fff', weight: 1.2, fillOpacity: 1
+                            }).addTo(schoolLayer).bindPopup(`<div class="p-3 bg-slate-900 rounded-lg text-white">
+                                <h4 class="font-black text-blue-400 text-sm mb-1">${normalize(s, 'NAME') || 'Facility'}</h4>
+                                <p class="text-[9px] uppercase font-black text-slate-500 tracking-widest">${normalize(s, 'amenity') || 'School'}</p>
                             </div>`);
                         }
                     });
                 }
             });
 
-            Papa.parse('northeast_conflict_cleaned.csv', {
-                download: true, header: true, dynamicTyping: true,
-                complete: function(results) {
-                    const points = results.data
-                        .filter(d => d.latitude && d.longitude)
-                        .map(d => [d.latitude, d.longitude, 0.5]);
-                    
-                    L.heatLayer(points, { 
-                        radius: 20, 
-                        blur: 15, 
-                        maxZoom: 10, 
-                        maxOpacity: 0.5,
-                        gradient: {0.4: '#1e3a8a', 0.6: '#9333ea', 1: '#ef4444'} 
-                    }).addTo(heatmapLayer);
+            // 3. Heatmap
+            Papa.parse('./northeast_conflict_cleaned.csv', {
+                download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
+                complete: (res) => {
+                    const pts = res.data.map(d => [normalize(d, 'latitude'), normalize(d, 'longitude'), 0.5]).filter(p => p[0]);
+                    L.heatLayer(pts, { radius: 22, blur: 18, maxZoom: 10, maxOpacity: 0.5, gradient: {0.4: '#1e3a8a', 0.6: '#9333ea', 1: '#ef4444'} }).addTo(heatmapLayer);
                 }
             });
         }
 
+        // UI Controls
         function toggleLayer(layer) {
-            visibleLayers[layer] = !visibleLayers[layer];
+            layers[layer] = !layers[layer];
             const btn = document.getElementById(`btn-${layer}`);
             const toggle = document.getElementById(`toggle-${layer}`);
             const dot = document.getElementById(`dot-${layer}`);
 
-            if (visibleLayers[layer]) {
-                if (layer === 'risk') map.addLayer(riskLayer);
-                if (layer === 'schools') map.addLayer(schoolLayer);
-                if (layer === 'heatmap') map.addLayer(heatmapLayer);
-                if (btn) btn.classList.add('bg-blue-600/10', 'border-blue-500/50');
-                if (toggle) { toggle.classList.replace('bg-slate-600', 'bg-blue-500'); dot.classList.replace('left-1', 'right-1'); }
+            if (layers[layer]) {
+                map.addLayer(window[layer + 'Layer']);
+                btn.className = "w-full flex items-center justify-between p-4 rounded-xl bg-blue-600/10 border border-blue-500/30 transition-all group";
+                if (toggle) { toggle.className = "w-9 h-5 bg-blue-500 rounded-full relative transition-colors"; dot.className = "absolute right-1 top-1 w-3 h-3 bg-white rounded-full shadow-sm"; }
             } else {
-                if (layer === 'risk') map.removeLayer(riskLayer);
-                if (layer === 'schools') map.removeLayer(schoolLayer);
-                if (layer === 'heatmap') map.removeLayer(heatmapLayer);
-                if (btn) btn.classList.remove('bg-blue-600/10', 'border-blue-500/50');
-                if (toggle) { toggle.classList.replace('bg-blue-500', 'bg-slate-600'); dot.classList.replace('right-1', 'left-1'); }
+                map.removeLayer(window[layer + 'Layer']);
+                btn.className = "w-full flex items-center justify-between p-4 rounded-xl bg-slate-800/40 border border-slate-800 transition-all group hover:border-slate-600";
+                if (toggle) { toggle.className = "w-9 h-5 bg-slate-700 rounded-full relative transition-colors"; dot.className = "absolute left-1 top-1 w-3 h-3 bg-slate-400 rounded-full transition-all"; }
             }
         }
 
