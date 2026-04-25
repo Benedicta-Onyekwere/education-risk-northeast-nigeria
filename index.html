@@ -38,7 +38,7 @@
                 <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400">Education Bridge Initiative</span>
             </div>
             <h1 class="text-xl font-bold tracking-tight">Northeast Nigeria: Where Children Face Conflict and Lost School Access</h1>
-            <p class="text-xs text-slate-400 mt-1">Strategic Education Risk Assessment (2024)</p>
+            <p class="text-xs text-slate-400 mt-1 font-semibold uppercase tracking-wider">Strategic Education Risk Assessment (2024)</p>
         </div>
 
         <!-- Dashboard Content -->
@@ -62,7 +62,7 @@
                 <div class="space-y-3">
                     <button onclick="toggleLayer('risk')" id="btn-risk" class="w-full flex items-center justify-between p-3 rounded-lg bg-blue-600/10 border border-blue-500/50 text-sm transition-all hover:bg-blue-600/20">
                         <span class="flex items-center"><div class="w-2 h-2 rounded-full bg-blue-400 mr-3"></div>District Risk Scores</span>
-                        <div class="w-8 h-4 bg-blue-500 rounded-full relative"><div class="absolute right-1 top-1 w-2 h-2 bg-white rounded-full"></div></div>
+                        <div id="toggle-risk" class="w-8 h-4 bg-blue-500 rounded-full relative transition-colors"><div id="dot-risk" class="absolute right-1 top-1 w-2 h-2 bg-white rounded-full transition-all"></div></div>
                     </button>
                     <button onclick="toggleLayer('schools')" id="btn-schools" class="w-full flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-700 text-sm transition-all hover:border-slate-500">
                         <span class="flex items-center"><div class="w-2 h-2 rounded-full bg-cyan-400 mr-3"></div>Verified School Points</span>
