@@ -103,6 +103,7 @@
                         const score = normalizeKey(lga, 'risk_score');
                         const events = normalizeKey(lga, 'event_count');
                         const deaths = normalizeKey(lga, 'total_fatalities');
+                        const pop514 = normalizeKey(lga, 'pop_5_14');
                         const row = document.createElement('div');
                         row.className = "flex items-center justify-between p-3 rounded-lg bg-slate-800/30 border border-slate-800 hover:border-slate-600 cursor-pointer transition-all";
                         row.onclick = () => map.flyTo([normalizeKey(lga, 'latitude'), normalizeKey(lga, 'longitude')], 11);
@@ -110,6 +111,7 @@
                             <div class="flex flex-col">
                                 <span class="text-sm font-semibold uppercase text-white tracking-tight">${name}</span>
                                 <span class="text-[10px] text-slate-500 font-medium">${events} events · ${deaths} fatalities</span>
+                                ${pop514 ? `<span class="text-[10px] text-blue-400 font-semibold italic">Estimated ${parseInt(pop514).toLocaleString()} children at risk</span>` : ''}
                             </div>
                             <span class="text-xs font-mono font-bold" style="color: ${getRiskColor(score)}">${score.toFixed(1)}</span>
                         `;
