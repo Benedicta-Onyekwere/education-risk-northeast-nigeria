@@ -1,6 +1,7 @@
 # Strategy Section: Mapping Education Risk in Northeastern Nigeria
 
 **A Conflict-Sensitive Planning Tool for EBI**
+**Strategic Education Risk Assessment — Borno, Yobe, and Adamawa States (2024)**
 
 ### Context
 Northeastern Nigeria has experienced over fifteen years of sustained armed conflict driven by the Boko Haram insurgency and its offshoots. Borno, Yobe, and Adamawa states — the three states at the epicentre of this crisis — have recorded some of the highest rates of school destruction, teacher displacement, and education disruption anywhere in Sub-Saharan Africa. Millions of children in this region have had their education interrupted, not once, but repeatedly, as conflict dynamics shift across local government areas (LGAs).
