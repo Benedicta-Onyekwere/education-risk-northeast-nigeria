@@ -30,4 +30,4 @@ In accordance with humanitarian data standards, this project utilizes open-sourc
 *   **Administrative Boundaries:** [OCHA Nigeria / OSGOF](https://data.humdata.org/dataset/cod-ab-nga). These boundaries are provided for humanitarian planning purposes under the OCHA standard terms of use.
 
 ## Use of AI
-This project utilized Large Language Models for data engineering assistance (scripting and validation), while all strategic, analytical, and design decisions were human-led.
+This project utilized Large Language Models for data engineering assistance (scripting and validation), while all strategic, analytical, and design decisions were human-led. Tools used included Claude for analytical reasoning, v0 for interface prototyping, and Python with Pandas for data processing.
