@@ -1,33 +1,31 @@
-# Education Risk Mapping — Northeast Nigeria
+# Strengthening Education Continuity in Conflict-Affected Regions
+## A Conflict-Sensitive Planning & Prioritization Tool for EBI
 
-## Project Overview
-This repository contains a conflict-sensitive education planning tool developed for the **Education Bridge Initiative (EBI)**. The project identifies Local Government Areas (LGAs) in Borno, Yobe, and Adamawa where school-age children face the highest risk due to active conflict and limited access to verified education facilities.
+This repository contains a **Strategic Education Risk Assessment prototype**. This proof of concept demonstrates the capability being proposed to EBI: a conflict-sensitive planning tool that bridges the gap between fragmented field knowledge and high-level data analysis to support faster, evidence-based prioritization in Borno, Yobe, and Adamawa states.
 
-## 🚀 Live Visual Artifact
-**[View the Interactive Dashboard here](https://benedicta-onyekwere.github.io/education-risk-northeast-nigeria/)**
+## 🚀 [Explore the Interactive Decision-Support Dashboard](https://benedicta-onyekwere.github.io/education-risk-northeast-nigeria/)
 
-## Key Findings
-Our analysis of 2024 conflict data and UNFPA population projections identifies five "Critical Tier" districts requiring immediate assessment:
-1. **Kukawa (Borno):** Highest conflict lethality (601 fatalities).
-2. **Gwoza (Borno):** Largest scale of child vulnerability (125,905 children at risk).
-3. **Marte (Borno)**
-4. **Abadam (Borno)**
-5. **Bama (Borno)**
+---
 
-## Repository Navigation
-To ensure complete transparency and reproducibility, this repository is organized as follows:
+### 💡 Strategic Value for EBI
+This project delivers a **replicable capability**, not just a static map. It addresses EBI’s core challenges by:
+*   **Visualizing Hidden Risks:** Identifying the distinction between districts with *extreme conflict lethality* (e.g., Kukawa) and those with *mass child vulnerability* (e.g., Gwoza).
+*   **Institutional Ownership:** Designed for non-technical staff to update, refresh, and scale across EBI's 12-country portfolio.
+*   **Open Data Standards:** Built exclusively on zero-cost, publicly available datasets (UCDP, HOT-OSM, UNFPA) to ensure no proprietary barriers.
 
-*   **[STRATEGY.md](./STRATEGY.md):** The formal project proposal, including context, objectives, and technology selection.
-*   **[METHODOLOGY.md](./METHODOLOGY.md):** A detailed technical log documenting every data sourcing and cleaning decision.
-*   **[Data Dictionary](./data/data_dictionary.md):** Definitions for every column and source in the cleaned datasets.
-*   **`data/`:** Contains the process history files and the UNFPA population source file.
+### 📂 Repository Navigation
+*   **[STRATEGY.md](./STRATEGY.md):** The full proposal, including the 4-activity implementation plan for validation, handover, and replication.
+*   **[METHODOLOGY.md](./METHODOLOGY.md):** A transparent technical log of all data cleaning, exclusion logic, and the composite risk formula.
+*   **[Data Dictionary](./data/data_dictionary.md):** Full metadata for the conflict, school, and population datasets.
+*   **`data/`:** The complete, cleaned data pipeline powering the artifact.
 
-## Data Attribution & Licenses
-In accordance with humanitarian data standards, this project utilizes open-source data from the following providers:
-*   **Conflict Data:** [UCDP GED Global version 23.1](https://ucdp.uu.se/). Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-*   **School Locations:** [HOT-OSM Verified Education Facilities](https://data.humdata.org/). © OpenStreetMap contributors. Licensed under [ODbL](https://opendatacommons.org/licenses/odbl/).
-*   **Population Data:** [UNFPA Nigeria Subnational Population Statistics 2020](https://data.humdata.org/dataset/cod-ps-nga). 
-*   **Administrative Boundaries:** [OCHA Nigeria / OSGOF](https://data.humdata.org/dataset/cod-ab-nga). These boundaries are provided for humanitarian planning purposes under the OCHA standard terms of use.
+### 🤖 Human-Led AI Reasoning
+In alignment with EBI’s requirements, this project employs an **AI-augmented workflow**:
+*   **Human Reasoning:** All strategic decisions—including the weighted risk formula (35/45/20) and the exclusion of non-school facilities—were led by human analytical judgment.
+*   **AI Assistance:** Large Language Models were used as **Data Engineering Assistants** to generate cleaning scripts, simulate weighting sensitivities, and accelerate UI prototyping.
 
-## Use of AI
-This project utilized Large Language Models for data engineering assistance (scripting and validation), while all strategic, analytical, and design decisions were human-led. Tools used included Claude for analytical reasoning, v0 for interface prototyping, and Python with Pandas for data processing.
+### ⚖️ Attribution & Transparency
+*   **Conflict:** [UCDP GED v23.1](https://ucdp.uu.se/) (CC BY 4.0)
+*   **Schools:** [HOT-OSM Verified Education Facilities](https://data.humdata.org/) (ODbL)
+*   **Population:** [UNFPA Nigeria Subnational Statistics 2020](https://data.humdata.org/dataset/cod-ps-nga)
+*   **Boundaries:** [OCHA Nigeria](https://data.humdata.org/dataset/cod-ab-nga)
